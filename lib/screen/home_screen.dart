@@ -48,12 +48,9 @@ class HomeAppBar extends StatelessWidget
   Widget build(BuildContext context) {
     return AppBar(
       centerTitle: true,
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
       title: Text(
         'メモアプリ',
-        style: TextStyle(
-          color: Colors.white
-        ),
       ),
     );
   }

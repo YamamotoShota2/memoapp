@@ -21,7 +21,7 @@ class _CreateNewScreen extends State<CreateNewScreen> {
 
   Future<void> createNew() async{
     try {
-        Map<String, String>? select = value != null ? {"name": "${tags[value!].getString()}"} : null;
+      Map<String, String>? select = value != null ? {"name": "${tags[value!].getString()}"} : null;
       final url = 'https://api.notion.com/v1/pages';
       final response = await http.post(
         Uri.parse(url),
@@ -54,26 +54,29 @@ class _CreateNewScreen extends State<CreateNewScreen> {
           }
         })
       );
-    } catch (e) {print(e);}
+    } catch (_) {}
   }
 
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
       customAppBar: createNewAppBar(),
-      customAppBody: createNewScreen(),
+      customAppBody: createNewBody(),
     );
   }
  
   PreferredSizeWidget createNewAppBar() {
     return AppBar(
       centerTitle: true,
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
+      leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.close),
+        ),
       title: Text(
         '新規作成',
-        style: TextStyle(
-          color: Colors.white
-        ),
       ),
       actions: [
         IconButton(
@@ -82,75 +85,63 @@ class _CreateNewScreen extends State<CreateNewScreen> {
             Navigator.pop(context);
           },
           icon: Icon(Icons.save),
-          color: Colors.white,
         )
       ],
     );
   }
 
-  Widget createNewScreen() {
+  Widget createNewBody() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Form(
         child: Column(
           children: [
-            TextFormField(
-              controller: _titleController,
-            ),
-            Wrap(
-              children: List<Widget>.generate(4, (int index) {
-                return ChoiceChip(
-                  label: Text(tags[index].getString()), 
-                  selected: value == index,
-                  onSelected: (bool selected) {
-                    setState(() {
-                      value = selected ? index : null;
-                    });
-                  },
-                );
-              }).toList()
-            ),
-            TextFormField(
-              controller: _contentController,
-              decoration: InputDecoration(
-                border: InputBorder.none,
-              ),
-            ),
+            titleField(),
+            choseTagButton(),
+            contentField(),
           ],
         ),
       ),
     );
   }
+
+  Widget titleField() {
+    return TextFormField(
+      controller: _titleController,
+      maxLines: null,
+      decoration: InputDecoration(
+        hintText: 'Titleを入力'
+      ),
+    );
+  }
+
+  Widget contentField() {
+    return TextFormField(
+      controller: _contentController,
+      maxLines: null,
+      decoration: InputDecoration(
+        border: InputBorder.none,
+      ),
+      autofocus: true,
+    );
+  }
+
+  Widget choseTagButton() {
+    return Wrap(
+      children: List<Widget>.generate(4, (int index) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(2.0, 8.0, 2.0, 1.0),
+          child: ChoiceChip(
+            label: Text(tags[index].getString()), 
+            selected: value == index,
+            onSelected: (bool selected) {
+              setState(() {
+                value = selected ? index : null;
+              });
+            },
+          ),
+        );
+      }).toList()
+    );
+  }
 } 
-
-// こっちでやるとcontrollerがうまく使えない
-// class CreateNewAppBar extends StatelessWidget 
-//   implements PreferredSizeWidget {
-//   const CreateNewAppBar({super.key});
-
-//   @override
-//   Size get preferredSize {
-//     return Size(double.infinity, 60);
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return AppBar(
-//       centerTitle: true,
-//       backgroundColor: Theme.of(context).colorScheme.primary,
-//       title: Text(
-//         '新規作成',
-//         style: TextStyle(
-//           color: Colors.white
-//         ),
-//       ),
-//       actions: [
-//         IconButton(
-//           onPressed: () => _CreateNewScreen().createNew(), 
-//           icon: Icon(Icons.save),
-//           color: Colors.white,
-//         )
-//       ],
-//     );
-//   }
-// }
