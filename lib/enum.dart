@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 enum Tags {
   work,
   private,
@@ -32,6 +34,21 @@ enum Tags {
         return Tags.other;
       default:
         return Tags.none;
+    }
+  }
+
+  Color getColor() {
+    switch (this) {
+      case Tags.work:
+        return Colors.blue;
+      case Tags.private:
+        return Colors.orange;
+      case Tags.money:
+        return Colors.yellow;
+      case Tags.other:
+        return Colors.blueGrey;
+      default:
+        return Colors.white;
     }
   }
 }

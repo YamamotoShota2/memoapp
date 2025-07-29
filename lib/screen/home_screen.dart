@@ -59,7 +59,9 @@ class _HomeScreen extends State<HomeScreen> {
   }
 
   Widget homeBody() {
-    return Center(child: showMemos());
+    return Center(
+      child: showMemos()
+    );
   }
 
   Widget showMemos() {
@@ -81,8 +83,18 @@ class _HomeScreen extends State<HomeScreen> {
     return ListView.builder(
       itemCount: memos.length,
       itemBuilder: (context, index) {
-        return Card(
+        return Container(
+          margin: EdgeInsets.all(3.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10.0),
+            border: Border.all(
+              width: 2.0,
+              color: memos[index].tag.getColor(),
+            )
+          ),
           child: ListTile(
+            onTap: () => {print('タップ$index')},
             title: showMemoData(memos[index])
           ),
         );
@@ -128,7 +140,11 @@ class _HomeScreen extends State<HomeScreen> {
             child: IconButton(
               onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) {
                   return CreateNewScreen(); 
-              })),
+              })).then((value) {
+                setState(() {
+                  _futureMemos = getMemos();
+                });
+              }),
               icon: Icon(Icons.note_add_outlined),
               iconSize: 35,
             ),

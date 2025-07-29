@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:memoapp/base/base_screen.dart';
@@ -83,8 +84,9 @@ class _CreateNewScreen extends State<CreateNewScreen> {
       actions: [
         IconButton(
           onPressed: () {
-            createNew();
-            Navigator.pop(context);
+            createNew().then((value) {
+              Navigator.pop(context);
+            });
           },
           icon: Icon(Icons.save),
           iconSize: 30,
