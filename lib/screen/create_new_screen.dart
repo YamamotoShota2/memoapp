@@ -62,6 +62,7 @@ class _CreateNewScreen extends State<CreateNewScreen> {
     return BaseScreen(
       customAppBar: createNewAppBar(),
       customAppBody: createNewBody(),
+      customBottomNavigationBar: SizedBox.shrink(),
     );
   }
  
@@ -74,6 +75,7 @@ class _CreateNewScreen extends State<CreateNewScreen> {
             Navigator.pop(context);
           },
           icon: Icon(Icons.close),
+          iconSize: 30,
         ),
       title: Text(
         '新規作成',
@@ -85,21 +87,24 @@ class _CreateNewScreen extends State<CreateNewScreen> {
             Navigator.pop(context);
           },
           icon: Icon(Icons.save),
+          iconSize: 30,
         )
       ],
     );
   }
 
   Widget createNewBody() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Form(
-        child: Column(
-          children: [
-            titleField(),
-            choseTagButton(),
-            contentField(),
-          ],
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Form(
+          child: Column(
+            children: [
+              titleField(),
+              choseTagButton(),
+              contentField(),
+            ],
+          ),
         ),
       ),
     );

@@ -3,8 +3,14 @@ import 'package:flutter/material.dart';
 class BaseScreen extends StatelessWidget {
   final PreferredSizeWidget customAppBar;
   final Widget customAppBody;
+  final Widget customBottomNavigationBar;
 
-  const BaseScreen({required this.customAppBar, required this.customAppBody, super.key});
+  const BaseScreen({
+    required this.customAppBar, 
+    required this.customAppBody, 
+    required this.customBottomNavigationBar,
+    super.key
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +23,7 @@ class BaseScreen extends StatelessWidget {
       home: Scaffold(
         appBar: customAppBar,
         body: customAppBody,
+        bottomNavigationBar: customBottomNavigationBar,
       )
     );
   }

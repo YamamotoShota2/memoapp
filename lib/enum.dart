@@ -2,7 +2,8 @@ enum Tags {
   work,
   private,
   money,
-  other;
+  other,
+  none;
 
   String getString() {
     switch (this) {
@@ -14,6 +15,23 @@ enum Tags {
         return 'Money';
       case Tags.other:
         return 'Other';
+      case Tags.none:
+        return 'none';
+    }
+  }
+
+  static Tags getEnum(String? value) {
+    switch (value) {
+      case 'Work':
+        return Tags.work;
+      case 'Private':
+        return Tags.private;
+      case 'Money':
+        return Tags.money;
+      case 'Other':
+        return Tags.other;
+      default:
+        return Tags.none;
     }
   }
 }
