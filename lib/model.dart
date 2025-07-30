@@ -7,6 +7,7 @@ class Memo {
   final DateTime lastEditedTime;
   final Tags tag;
   final bool pin;
+  final String pageId;
 
   const Memo({
     required this.title,
@@ -15,6 +16,7 @@ class Memo {
     required this.lastEditedTime,
     required this.tag,
     required this.pin,
+    required this.pageId
   });
 
   factory Memo.fromMap(Map<String, dynamic> map) {
@@ -28,6 +30,7 @@ class Memo {
       lastEditedTime: DateTime.parse(lastEditedTimeStr), 
       tag: Tags.getEnum(properties['タグ']?['select']?['name']),
       pin: properties['ピン']?['checkbox'],
+      pageId: map["id"]
     );
   }
 }

@@ -1,11 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
-import 'package:memoapp/base/base_screen.dart';
 import 'package:memoapp/screen/create_new_screen.dart';
 import 'package:memoapp/model.dart';
 
@@ -19,6 +17,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreen extends State<HomeScreen> {
   late Future<List<Memo>> _futureMemos;
+  final memos = [];
+  final pinMemos = [];
 
   Future<List<Memo>> getMemos() async {
     try {
@@ -51,17 +51,15 @@ class _HomeScreen extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreen(
-      customAppBar: HomeAppBar(),
-      customAppBody: homeBody(),
-      customBottomNavigationBar: bottomAppBar(),
+    return Scaffold(
+      appBar: HomeAppBar(),
+      body: homeBody(),
+      bottomNavigationBar: bottomAppBar(),
     );
   }
 
   Widget homeBody() {
-    return Center(
-      child: showMemos()
-    );
+    return Center(child: showMemos());
   }
 
   Widget showMemos() {
@@ -70,7 +68,8 @@ class _HomeScreen extends State<HomeScreen> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final memos = snapshot.data!;
-          return Expanded(child: memosList(memos));
+          // makeMemosList(snapshot.data!);
+          return memosList(memos);
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}');
         }
@@ -78,6 +77,17 @@ class _HomeScreen extends State<HomeScreen> {
       }
     );
   }
+
+  // // ピン留めされたメモとそうでないものを分ける
+  // void makeMemosList(List data) {
+  //   for (dynamic memo in data) {
+  //     if (memo.pin == true) {
+  //       memos.add(memo);
+  //     } else {
+  //       pinMemos.add(memo);
+  //     }
+  //   }
+  // }
 
   Widget memosList(List memos) {
     return ListView.builder(
@@ -113,6 +123,7 @@ class _HomeScreen extends State<HomeScreen> {
             children: [
               Text(
                 memo.title,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -120,6 +131,7 @@ class _HomeScreen extends State<HomeScreen> {
               ),
               Text(
                 memo.content,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               )
             ],

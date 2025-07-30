@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:memoapp/screen/home_screen.dart';
+import 'package:memoapp/memo_app.dart';
 
 void main() async{
   await dotenv.load(fileName: '.env');
-  runApp(const HomeScreen());
+  runApp(const MemoApp());
 }

@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:memoapp/base/base_screen.dart';
@@ -23,7 +22,7 @@ class _CreateNewScreen extends State<CreateNewScreen> {
   Future<void> createNew() async{
     try {
       Map<String, String>? select = value != null ? {"name": "${tags[value!].getString()}"} : null;
-      final url = 'https://api.notion.com/v1/pages';
+      final url = 'https://api.notion.com/v1/pa';
       final response = await http.post(
         Uri.parse(url),
         headers: {
@@ -55,15 +54,22 @@ class _CreateNewScreen extends State<CreateNewScreen> {
           }
         })
       );
-    } catch (_) {}
+      if (response.statusCode == 200) {
+        Navigator.pop(context);
+      } else {
+        throw Exception(response.body);
+      }
+    } catch (e) {
+      _showAlert('error', e.toString());
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreen(
-      customAppBar: createNewAppBar(),
-      customAppBody: createNewBody(),
-      customBottomNavigationBar: SizedBox.shrink(),
+    return Scaffold(
+      appBar: createNewAppBar(),
+      body: createNewBody(),
+      // customBottomNavigationBar: SizedBox.shrink(),
     );
   }
  
@@ -84,9 +90,7 @@ class _CreateNewScreen extends State<CreateNewScreen> {
       actions: [
         IconButton(
           onPressed: () {
-            createNew().then((value) {
-              Navigator.pop(context);
-            });
+            createNew();
           },
           icon: Icon(Icons.save),
           iconSize: 30,
@@ -150,5 +154,26 @@ class _CreateNewScreen extends State<CreateNewScreen> {
         );
       }).toList()
     );
+  }
+
+  // API通信エラーダイアログ
+  AlertDialog _alertDialog(BuildContext context, String alertTitle, String msg) {
+    return AlertDialog(
+      title: Text(alertTitle),
+      content: Text(msg),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, 'OK'),
+          child: Text('OK')
+        )
+      ],
+    );
+  }
+
+  // ダイアログ表示
+  void _showAlert(String alertTitle, String msg) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => _alertDialog(context, alertTitle, msg));
   }
 } 
