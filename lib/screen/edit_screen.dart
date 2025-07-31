@@ -4,25 +4,35 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:memoapp/enum.dart';
+import 'package:memoapp/model.dart';
 
-class CreateNewScreen extends StatefulWidget {
-  const CreateNewScreen({super.key});
+class EditScreen extends StatefulWidget {
+  const EditScreen({required this.memo, super.key});
+  final Memo memo;
 
   @override
-  State<CreateNewScreen> createState() => _CreateNewScreen();
+  State<EditScreen> createState() => _EditScreen();
 }
 
-class _CreateNewScreen extends State<CreateNewScreen> {
-
+class _EditScreen extends State<EditScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   int? value;
+  final formKey = GlobalKey<FormState>();
 
-  Future<void> createNew() async{
+  @override
+  void initState() {
+    _titleController.text = widget.memo.title;
+    _contentController.text = widget.memo.content;
+    value = widget.memo.tag != Tags.none ? tags.indexOf(widget.memo.tag) : null ;
+    super.initState();
+  }
+  
+  Future<void> update() async{
     try {
       Map<String, String>? select = value != null ? {"name": "${tags[value!].getString()}"} : null;
-      final url = 'https://api.notion.com/v1/pages';
-      final response = await http.post(
+      final url = 'https://api.notion.com/v1/pages/${widget.memo.pageId}';
+      final response = await http.patch(
         Uri.parse(url),
         headers: {
           HttpHeaders.authorizationHeader: 
@@ -83,15 +93,19 @@ class _CreateNewScreen extends State<CreateNewScreen> {
           iconSize: 30,
         ),
       title: Text(
-        '新規作成',
+        '編集',
       ),
       actions: [
-        IconButton(
-          onPressed: () {
-            createNew();
-          },
-          icon: Icon(Icons.save),
-          iconSize: 30,
+        Form(
+          child: IconButton(
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                update();
+              }
+            },
+            icon: Icon(Icons.save),
+            iconSize: 30,
+          ),
         )
       ],
     );
@@ -102,6 +116,7 @@ class _CreateNewScreen extends State<CreateNewScreen> {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Form(
+          key: formKey,
           child: Column(
             children: [
               titleField(),
@@ -121,6 +136,12 @@ class _CreateNewScreen extends State<CreateNewScreen> {
       decoration: InputDecoration(
         hintText: 'Titleを入力'
       ),
+      validator: (value) {
+        if (widget.memo.title != '' && (value == null || value.isEmpty)) {
+          return '入力してください';
+        }
+        return null;
+      },
     );
   }
 

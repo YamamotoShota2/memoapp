@@ -6,13 +6,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 import 'package:memoapp/screen/create_new_screen.dart';
 import 'package:memoapp/model.dart';
+import 'package:memoapp/screen/edit_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreen();
-
 }
 
 class _HomeScreen extends State<HomeScreen> {
@@ -34,7 +34,8 @@ class _HomeScreen extends State<HomeScreen> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body) as Map<String, dynamic>;
-        return (data['results'] as List).map((e) => Memo.fromMap(e)).toList();
+        return (data['results'] as List).map((e) => Memo.fromMap(e)).toList()
+          ..sort((a, b) => b.lastEditedTime.compareTo(a.lastEditedTime));
       } else {
         throw Exception(response.body);
       }
@@ -52,9 +53,19 @@ class _HomeScreen extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HomeAppBar(),
+      appBar: homeAppBar(),
       body: homeBody(),
       bottomNavigationBar: bottomAppBar(),
+    );
+  }
+
+  PreferredSizeWidget homeAppBar() {
+    return AppBar(
+      centerTitle: true,
+      backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
+      title: Text(
+        'メモアプリ',
+      ),
     );
   }
 
@@ -104,7 +115,13 @@ class _HomeScreen extends State<HomeScreen> {
             )
           ),
           child: ListTile(
-            onTap: () => {print('タップ$index')},
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+              return EditScreen(memo: memos[index]);
+            })).then((_) {
+              setState(() {
+                _futureMemos = getMemos();
+              });
+            }),
             title: showMemoData(memos[index])
           ),
         );
@@ -151,8 +168,8 @@ class _HomeScreen extends State<HomeScreen> {
             alignment: Alignment.bottomRight,
             child: IconButton(
               onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                  return CreateNewScreen(); 
-              })).then((value) {
+                return CreateNewScreen(); 
+              })).then((_) {
                 setState(() {
                   _futureMemos = getMemos();
                 });
@@ -166,24 +183,3 @@ class _HomeScreen extends State<HomeScreen> {
     );
   }
 } 
-
-class HomeAppBar extends StatelessWidget 
-  implements PreferredSizeWidget {
-  const HomeAppBar({super.key});
-
-  @override
-  Size get preferredSize {
-    return Size(double.infinity, 60);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      centerTitle: true,
-      backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
-      title: Text(
-        'メモアプリ',
-      ),
-    );
-  }
-}
