@@ -63,6 +63,7 @@ class _HomeScreen extends State<HomeScreen> {
       );
 
       if (response.statusCode == 200) {
+        hideIndicator(context);
         setState(() {
           _futureMemos = getMemos();
         });
@@ -70,6 +71,7 @@ class _HomeScreen extends State<HomeScreen> {
         throw Exception(response.body);
       }
     } catch (e) {
+      hideIndicator(context);
       _showAlert('エラー', e.toString());
     }
   }
@@ -151,7 +153,8 @@ class _HomeScreen extends State<HomeScreen> {
               children: [
                 SlidableAction(
                   onPressed: (_) {
-                    showIndicator(context, deleteMemo(memos[index].pageId));
+                    showIndicator(context);
+                    deleteMemo(memos[index].pageId);
                   },
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
@@ -240,7 +243,7 @@ class _HomeScreen extends State<HomeScreen> {
       builder: (BuildContext context) => CustomDialog(title: alertTitle, msg: msg));
   }
 
-  void showIndicator(BuildContext context, Future operation) {
+  void showIndicator(BuildContext context) {
     showDialog(
       context: context, 
       builder: (context) {
@@ -249,9 +252,9 @@ class _HomeScreen extends State<HomeScreen> {
         );
       }
     );
-    operation.whenComplete(() {
-      if (!context.mounted) return;
-      Navigator.of(context).pop();
-    });
+  }
+
+  void hideIndicator(BuildContext context) {
+    Navigator.pop(context);
   }
 } 
