@@ -5,6 +5,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
+import 'package:memoapp/components/custom_dialog.dart';
 import 'package:memoapp/screen/create_new_screen.dart';
 import 'package:memoapp/model.dart';
 import 'package:memoapp/screen/edit_screen.dart';
@@ -47,7 +48,7 @@ class _HomeScreen extends State<HomeScreen> {
 
   Future<void> deleteMemo(String pageId) async {
     try {
-      final url = 'https://api.notion.com/v1/pages/${pageId}';
+      final url = 'https://api.notion.com/v1/paes/${pageId}';
       final response = await http.patch(
         Uri.parse(url),
         headers: {
@@ -60,7 +61,7 @@ class _HomeScreen extends State<HomeScreen> {
           "archived": true
         })
       );
-      
+
       if (response.statusCode == 200) {
         setState(() {
           _futureMemos = getMemos();
@@ -68,8 +69,8 @@ class _HomeScreen extends State<HomeScreen> {
       } else {
         throw Exception(response.body);
       }
-    } catch (_) {
-      rethrow;
+    } catch (e) {
+      _showAlert('エラー', e.toString());
     }
   }
 
@@ -230,5 +231,12 @@ class _HomeScreen extends State<HomeScreen> {
         );
       }
     );
+  }
+
+    // ダイアログ表示
+  void _showAlert(String alertTitle, String msg) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CustomDialog(title: alertTitle, msg: msg));
   }
 } 

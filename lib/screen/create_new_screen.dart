@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:memoapp/components/custom_dialog.dart';
 import 'package:memoapp/enum.dart';
 
 class CreateNewScreen extends StatefulWidget {
@@ -154,24 +155,10 @@ class _CreateNewScreen extends State<CreateNewScreen> {
     );
   }
 
-  // API通信エラーダイアログ
-  AlertDialog _alertDialog(BuildContext context, String alertTitle, String msg) {
-    return AlertDialog(
-      title: Text(alertTitle),
-      content: Text(msg),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context, 'OK'),
-          child: Text('OK')
-        )
-      ],
-    );
-  }
-
   // ダイアログ表示
   void _showAlert(String alertTitle, String msg) {
     showDialog(
       context: context,
-      builder: (BuildContext context) => _alertDialog(context, alertTitle, msg));
+      builder: (BuildContext context) => CustomDialog(title: alertTitle, msg: msg));
   }
 } 
