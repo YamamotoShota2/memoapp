@@ -65,24 +65,26 @@ class _EditScreen extends State<EditScreen> {
         })
       );
       if (response.statusCode == 200) {
+        hideIndicator(context);
         Navigator.pop(context);
       } else {
         throw Exception(response.body);
       }
     } catch (e) {
+      hideIndicator(context);
       _showAlert('error', e.toString());
-    }
+    } 
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: createNewAppBar(),
-      body: createNewBody(),
+      appBar: editAppBar(),
+      body: editBody(),
     );
   }
  
-  PreferredSizeWidget createNewAppBar() {
+  PreferredSizeWidget editAppBar() {
     return AppBar(
       centerTitle: true,
       backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
@@ -101,6 +103,7 @@ class _EditScreen extends State<EditScreen> {
           child: IconButton(
             onPressed: () {
               if (formKey.currentState!.validate()) {
+                showIndicator(context);
                 update();
               }
             },
@@ -112,7 +115,7 @@ class _EditScreen extends State<EditScreen> {
     );
   }
 
-  Widget createNewBody() {
+  Widget editBody() {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -181,5 +184,20 @@ class _EditScreen extends State<EditScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(title: alertTitle, msg: msg));
+  }
+
+  void showIndicator(BuildContext context) {
+    showDialog(
+      context: context, 
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+    );
+  }
+
+  void hideIndicator(BuildContext context) {
+    Navigator.pop(context);
   }
 } 
