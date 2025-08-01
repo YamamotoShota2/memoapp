@@ -48,7 +48,7 @@ class _HomeScreen extends State<HomeScreen> {
 
   Future<void> deleteMemo(String pageId) async {
     try {
-      final url = 'https://api.notion.com/v1/paes/${pageId}';
+      final url = 'https://api.notion.com/v1/pages/${pageId}';
       final response = await http.patch(
         Uri.parse(url),
         headers: {
