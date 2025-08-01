@@ -89,7 +89,7 @@ class _CreateNewScreen extends State<CreateNewScreen> {
       actions: [
         IconButton(
           onPressed: () {
-            createNew();
+            showIndicator(context, createNew());
           },
           icon: Icon(Icons.save),
           iconSize: 30,
@@ -160,5 +160,20 @@ class _CreateNewScreen extends State<CreateNewScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(title: alertTitle, msg: msg));
+  }
+
+  void showIndicator(BuildContext context, Future operation) {
+    showDialog(
+      context: context, 
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+    );
+    operation.whenComplete(() {
+      if (!context.mounted) return;
+      Navigator.of(context).pop();
+    });
   }
 } 
