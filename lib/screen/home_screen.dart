@@ -151,7 +151,7 @@ class _HomeScreen extends State<HomeScreen> {
               children: [
                 SlidableAction(
                   onPressed: (_) {
-                    deleteMemo(memos[index].pageId);
+                    showIndicator(context, deleteMemo(memos[index].pageId));
                   },
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
@@ -238,5 +238,20 @@ class _HomeScreen extends State<HomeScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(title: alertTitle, msg: msg));
+  }
+
+  void showIndicator(BuildContext context, Future operation) {
+    showDialog(
+      context: context, 
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+    );
+    operation.whenComplete(() {
+      if (!context.mounted) return;
+      Navigator.of(context).pop();
+    });
   }
 } 
