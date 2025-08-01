@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
@@ -36,6 +37,34 @@ class _HomeScreen extends State<HomeScreen> {
         final data = jsonDecode(response.body) as Map<String, dynamic>;
         return (data['results'] as List).map((e) => Memo.fromMap(e)).toList()
           ..sort((a, b) => b.lastEditedTime.compareTo(a.lastEditedTime));
+      } else {
+        throw Exception(response.body);
+      }
+    } catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<void> deleteMemo(String pageId) async {
+    try {
+      final url = 'https://api.notion.com/v1/pages/${pageId}';
+      final response = await http.patch(
+        Uri.parse(url),
+        headers: {
+          HttpHeaders.authorizationHeader: 
+            'Bearer ${dotenv.env['NOTION_API_KEY']}',
+          'Notion-Version': '2022-06-28',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "archived": true
+        })
+      );
+      
+      if (response.statusCode == 200) {
+        setState(() {
+          _futureMemos = getMemos();
+        });
       } else {
         throw Exception(response.body);
       }
@@ -114,15 +143,35 @@ class _HomeScreen extends State<HomeScreen> {
               color: memos[index].tag.getColor(),
             )
           ),
-          child: ListTile(
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-              return EditScreen(memo: memos[index]);
-            })).then((_) {
-              setState(() {
-                _futureMemos = getMemos();
-              });
-            }),
-            title: showMemoData(memos[index])
+          child: Slidable(
+            endActionPane: ActionPane(
+              motion: const DrawerMotion(),
+              extentRatio: 0.5,
+              children: [
+                SlidableAction(
+                  onPressed: (_) {
+                    deleteMemo(memos[index].pageId);
+                  },
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  icon: Icons.delete,
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(8.0),
+                    bottomRight: Radius.circular(8.0) 
+                  ),
+                )
+              ]
+            ),
+            child: ListTile(
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return EditScreen(memo: memos[index]);
+              })).then((_) {
+                setState(() {
+                  _futureMemos = getMemos();
+                });
+              }),
+              title: showMemoData(memos[index])
+            ),
           ),
         );
       },
