@@ -224,8 +224,8 @@ class _HomeScreen extends State<HomeScreen> {
                   _futureMemos = getMemos();
                 });
               }),
-              icon: Icon(Icons.note_add_outlined),
-              iconSize: 35,
+              icon: Icon(Icons.edit_square),
+              iconSize: 40,
             ),
           ),
         );
