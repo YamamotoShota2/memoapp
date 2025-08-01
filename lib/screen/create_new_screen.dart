@@ -55,11 +55,13 @@ class _CreateNewScreen extends State<CreateNewScreen> {
         })
       );
       if (response.statusCode == 200) {
+        hideIndicator(context);
         Navigator.pop(context);
       } else {
         throw Exception(response.body);
       }
     } catch (e) {
+      hideIndicator(context);
       _showAlert('error', e.toString());
     }
   }
@@ -89,7 +91,8 @@ class _CreateNewScreen extends State<CreateNewScreen> {
       actions: [
         IconButton(
           onPressed: () {
-            showIndicator(context, createNew());
+            showIndicator(context);
+            createNew();
           },
           icon: Icon(Icons.save),
           iconSize: 30,
@@ -162,7 +165,7 @@ class _CreateNewScreen extends State<CreateNewScreen> {
       builder: (BuildContext context) => CustomDialog(title: alertTitle, msg: msg));
   }
 
-  void showIndicator(BuildContext context, Future operation) {
+  void showIndicator(BuildContext context) {
     showDialog(
       context: context, 
       builder: (context) {
@@ -171,9 +174,9 @@ class _CreateNewScreen extends State<CreateNewScreen> {
         );
       }
     );
-    operation.whenComplete(() {
-      if (!context.mounted) return;
-      Navigator.of(context).pop();
-    });
+  }
+
+  void hideIndicator(BuildContext context) {
+    Navigator.pop(context);
   }
 } 
