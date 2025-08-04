@@ -1,3 +1,5 @@
+// ホーム画面、メモの一覧ページ
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -28,6 +30,7 @@ class _HomeScreen extends State<HomeScreen> {
     'Content-Type': 'application/json',
   };
 
+  // DBからメモを取得
   Future<List<Memo>> getMemos() async {
     try {
       final url = 'https://api.notion.com/v1/databases/${dotenv.env['NOTION_DATABASE_KEY']}/query';
@@ -48,6 +51,7 @@ class _HomeScreen extends State<HomeScreen> {
     }
   }
 
+  // メモの削除
   Future<void> deleteMemo(String pageId) async {
     try {
       final url = 'https://api.notion.com/v1/pages/${pageId}';
@@ -66,6 +70,7 @@ class _HomeScreen extends State<HomeScreen> {
     }
   }
 
+  // メモのピン留め
   Future<void> pinMemo(String pageId, bool check) async {
     try {
       final url = 'https://api.notion.com/v1/pages/${pageId}';
@@ -86,6 +91,7 @@ class _HomeScreen extends State<HomeScreen> {
     }
   }
 
+  // PATCH処理の場合のstatusCode確認
   void checkStatusCode(response) {
     if (response.statusCode == 200) {
         hideIndicator(context);
@@ -97,6 +103,7 @@ class _HomeScreen extends State<HomeScreen> {
       }
   }
 
+  // アプリ実行時にメモを取得
   @override
   void initState() {
     super.initState();
@@ -200,6 +207,7 @@ class _HomeScreen extends State<HomeScreen> {
     );
   }
 
+  // リストをスライドした時の処理
   Widget slidable(Memo memo) {
     return Slidable(
       endActionPane: ActionPane(
@@ -247,6 +255,7 @@ class _HomeScreen extends State<HomeScreen> {
     );
   }
 
+  // 各メモの表示内容
   Widget showMemoData(dynamic memo) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -299,6 +308,7 @@ class _HomeScreen extends State<HomeScreen> {
     );
   }
 
+//  メモの件数表示
   Widget showMemoNum() {
     return FutureBuilder(
       future: _futureMemos, 
@@ -311,6 +321,7 @@ class _HomeScreen extends State<HomeScreen> {
     );
   }
 
+  // 新規作成ボタン
   Widget createNewButton() {
     return IconButton(
       onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) {
@@ -332,6 +343,7 @@ class _HomeScreen extends State<HomeScreen> {
       builder: (BuildContext context) => CustomDialog(title: alertTitle, msg: msg));
   }
 
+  // 通信時のインジケーター表示
   void showIndicator(BuildContext context) {
     showDialog(
       context: context, 
@@ -343,6 +355,7 @@ class _HomeScreen extends State<HomeScreen> {
     );
   }
 
+  // インジケーターを非表示
   void hideIndicator(BuildContext context) {
     Navigator.pop(context);
   }

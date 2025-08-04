@@ -1,3 +1,5 @@
+// メモの編集画面
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -20,9 +22,10 @@ class _EditScreen extends State<EditScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   int? value;
-  late final int? checkValue;
+  late final int? checkValue;    // タグの初期値を保存する用(変更されたかのチェックのため)
   final formKey = GlobalKey<FormState>();
 
+  // タイトル、内容、タグを選択されたメモの内容で初期化
   @override
   void initState() {
     _titleController.text = widget.memo.title;
@@ -32,6 +35,7 @@ class _EditScreen extends State<EditScreen> {
     super.initState();
   }
   
+  // メモの更新
   Future<void> update() async{
     try {
       Map<String, String>? select = value != null ? {"name": "${tags[value!].getString()}"} : null;
@@ -93,6 +97,7 @@ class _EditScreen extends State<EditScreen> {
       backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
       leading: IconButton(
         onPressed: () {
+          // タイトル、内容、タグが変更された場合に注意のアラートを表示
           if (_titleController.text != widget.memo.title || _contentController.text != widget.memo.content || value != checkValue) {
           _showChecking();
         } else {
@@ -194,12 +199,14 @@ class _EditScreen extends State<EditScreen> {
       builder: (BuildContext context) => CustomDialog(title: alertTitle, msg: msg));
   }
 
+  // 入力が保存されないことの注意のアラートを表示
   void _showChecking() {
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomAlertDialog());
   }
 
+  // 通信中のインジケーター表示
   void showIndicator(BuildContext context) {
     showDialog(
       context: context, 
@@ -211,6 +218,7 @@ class _EditScreen extends State<EditScreen> {
     );
   }
 
+  // インジケーターを非表示
   void hideIndicator(BuildContext context) {
     Navigator.pop(context);
   }
