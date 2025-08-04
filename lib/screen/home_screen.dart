@@ -144,14 +144,19 @@ class _HomeScreen extends State<HomeScreen> {
           return SingleChildScrollView(
             child: Column(
               children: [
-                Text(
-                  'ピン留めされたメモ',
-                  style: TextStyle(
-                    fontSize: 20
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'ピン留めされたメモ',
+                    style: TextStyle(
+                      fontSize: 20
+                    ),
                   ),
                 ),
                 memosList(pinMemos), 
-                Divider(),  
+                Divider(
+                  height: 50,
+                ),  
                 memosList(memos),
               ],
             ),
