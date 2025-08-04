@@ -147,6 +147,7 @@ class _CreateNewScreen extends State<CreateNewScreen> {
           child: ChoiceChip(
             label: Text(tags[index].getString()), 
             selected: value == index,
+            selectedColor: tags[index].getColor(),
             onSelected: (bool selected) {
               setState(() {
                 value = selected ? index : null;

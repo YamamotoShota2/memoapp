@@ -168,6 +168,7 @@ class _EditScreen extends State<EditScreen> {
           child: ChoiceChip(
             label: Text(tags[index].getString()), 
             selected: value == index,
+            selectedColor: tags[index].getColor(),
             onSelected: (bool selected) {
               setState(() {
                 value = selected ? index : null;
