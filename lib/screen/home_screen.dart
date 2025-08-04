@@ -21,16 +21,19 @@ class _HomeScreen extends State<HomeScreen> {
   late Future<List<Memo>> _futureMemos;
   int memoNum = 0;
 
+  Map<String, String> headers = {
+    HttpHeaders.authorizationHeader: 
+    'Bearer ${dotenv.env['NOTION_API_KEY']}',
+    'Notion-Version': '2022-06-28',
+    'Content-Type': 'application/json',
+  };
+
   Future<List<Memo>> getMemos() async {
     try {
       final url = 'https://api.notion.com/v1/databases/${dotenv.env['NOTION_DATABASE_KEY']}/query';
       final response = await http.post(
         Uri.parse(url),
-        headers: {
-          HttpHeaders.authorizationHeader: 
-            'Bearer ${dotenv.env['NOTION_API_KEY']}',
-          'Notion-Version': '2022-06-28',
-        },
+        headers: headers
       );
 
       if (response.statusCode == 200) {
@@ -50,25 +53,13 @@ class _HomeScreen extends State<HomeScreen> {
       final url = 'https://api.notion.com/v1/pages/${pageId}';
       final response = await http.patch(
         Uri.parse(url),
-        headers: {
-          HttpHeaders.authorizationHeader: 
-            'Bearer ${dotenv.env['NOTION_API_KEY']}',
-          'Notion-Version': '2022-06-28',
-          'Content-Type': 'application/json',
-        },
+        headers: headers,
         body: jsonEncode({
           "archived": true
         })
       );
 
-      if (response.statusCode == 200) {
-        hideIndicator(context);
-        setState(() {
-          _futureMemos = getMemos();
-        });
-      } else {
-        throw Exception(response.body);
-      }
+      checkStatusCode(response);
     } catch (e) {
       hideIndicator(context);
       _showAlert('エラー', e.toString());
@@ -80,12 +71,7 @@ class _HomeScreen extends State<HomeScreen> {
       final url = 'https://api.notion.com/v1/pages/${pageId}';
       final response = await http.patch(
         Uri.parse(url),
-        headers: {
-          HttpHeaders.authorizationHeader: 
-            'Bearer ${dotenv.env['NOTION_API_KEY']}',
-          'Notion-Version': '2022-06-28',
-          'Content-Type': 'application/json',
-        },
+        headers: headers,
         body: jsonEncode({
           "properties": {
             "ピン": {"checkbox": check}
@@ -93,7 +79,15 @@ class _HomeScreen extends State<HomeScreen> {
         })
       );
 
-      if (response.statusCode == 200) {
+      checkStatusCode(response);
+    } catch (e) {
+      hideIndicator(context);
+      _showAlert('エラー', e.toString());
+    }
+  }
+
+  void checkStatusCode(response) {
+    if (response.statusCode == 200) {
         hideIndicator(context);
         setState(() {
           _futureMemos = getMemos();
@@ -101,10 +95,6 @@ class _HomeScreen extends State<HomeScreen> {
       } else {
         throw Exception(response.body);
       }
-    } catch (e) {
-      hideIndicator(context);
-      _showAlert('エラー', e.toString());
-    }
   }
 
   @override
@@ -144,30 +134,34 @@ class _HomeScreen extends State<HomeScreen> {
           final (memos, pinMemos) = makeMemosList(snapshot.data!);
           memoNum = memos.length + pinMemos.length;
           return SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'ピン留めされたメモ',
-                    style: TextStyle(
-                      fontSize: 20
-                    ),
-                  ),
-                ),
-                memosList(pinMemos), 
-                Divider(
-                  height: 50,
-                ),  
-                memosList(memos),
-              ],
-            ),
+            child: futureBody(pinMemos, memos),
           );
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}');
         }
         return const CircularProgressIndicator();
       }
+    );
+  }
+
+  Widget futureBody(List pinMemos, List memos) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            'ピン留めされたメモ',
+            style: TextStyle(
+              fontSize: 20
+            ),
+          ),
+        ),
+        memosList(pinMemos), 
+        Divider(
+          height: 50,
+        ),  
+        memosList(memos),
+      ],
     );
   }
 
@@ -199,49 +193,57 @@ class _HomeScreen extends State<HomeScreen> {
                 color: memo.tag.getColor(),
               )
             ),
-            child: Slidable(
-              endActionPane: ActionPane(
-                motion: const DrawerMotion(),
-                extentRatio: 0.5,
-                children: [
-                  SlidableAction(
-                    onPressed: (_) {
-                      showIndicator(context);
-                      memo.pin ? pinMemo(memo.pageId, false) : pinMemo(memo.pageId, true); 
-                    },
-                    backgroundColor: Colors.orangeAccent,
-                    foregroundColor: Colors.white,
-                    icon: Icons.push_pin,
-                  ),
-                  SlidableAction(
-                    onPressed: (_) {
-                      showIndicator(context);
-                      deleteMemo(memo.pageId);
-                    },
-                    backgroundColor: Colors.deepOrange,
-                    foregroundColor: Colors.white,
-                    icon: Icons.delete,
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(8.0),
-                      bottomRight: Radius.circular(8.0) 
-                    ),
-                  )
-                ]
-              ),
-              child: ListTile(
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                  return EditScreen(memo: memo);
-                })).then((_) {
-                  setState(() {
-                    _futureMemos = getMemos();
-                  });
-                }),
-                title: showMemoData(memo)
-              ),
-            ),
+            child: slidable(memo),
           ),
         }
       ],
+    );
+  }
+
+  Widget slidable(Memo memo) {
+    return Slidable(
+      endActionPane: ActionPane(
+        motion: const DrawerMotion(),
+        extentRatio: 0.5,
+        children: [
+          SlidableAction(
+            onPressed: (_) {
+              showIndicator(context);
+              memo.pin ? pinMemo(memo.pageId, false) : pinMemo(memo.pageId, true); 
+            },
+            backgroundColor: Colors.orangeAccent,
+            foregroundColor: Colors.white,
+            icon: Icons.push_pin,
+          ),
+          SlidableAction(
+            onPressed: (_) {
+              showIndicator(context);
+              deleteMemo(memo.pageId);
+            },
+            backgroundColor: Colors.deepOrange,
+            foregroundColor: Colors.white,
+            icon: Icons.delete,
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(8.0),
+              bottomRight: Radius.circular(8.0) 
+            ),
+          )
+        ]
+      ),
+      child: listTile(memo),
+    );
+  }
+
+  Widget listTile(Memo memo) {
+    return ListTile(
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+        return EditScreen(memo: memo);
+      })).then((_) {
+        setState(() {
+          _futureMemos = getMemos();
+        });
+      }),
+      title: showMemoData(memo)
     );
   }
 
