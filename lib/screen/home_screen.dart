@@ -19,6 +19,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreen extends State<HomeScreen> {
   late Future<List<Memo>> _futureMemos;
+  int memoNum = 0;
 
   Future<List<Memo>> getMemos() async {
     try {
@@ -141,6 +142,7 @@ class _HomeScreen extends State<HomeScreen> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final (memos, pinMemos) = makeMemosList(snapshot.data!);
+          memoNum = memos.length + pinMemos.length;
           return SingleChildScrollView(
             child: Column(
               children: [
@@ -278,22 +280,46 @@ class _HomeScreen extends State<HomeScreen> {
       builder: (context) {
         return BottomAppBar(
           color: Theme.of(context).colorScheme.onInverseSurface,
-          child: Align(
-            alignment: Alignment.bottomRight,
-            child: IconButton(
-              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                return CreateNewScreen(); 
-              })).then((_) {
-                setState(() {
-                  _futureMemos = getMemos();
-                });
-              }),
-              icon: Icon(Icons.edit_square),
-              iconSize: 40,
-            ),
+          child: Row(
+            children: [
+              Expanded(child: SizedBox()),
+              Center(child: showMemoNum()),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.topRight,
+                  child: createNewButton(),
+                ),
+              ),
+            ],
           ),
         );
       }
+    );
+  }
+
+  Widget showMemoNum() {
+    return FutureBuilder(
+      future: _futureMemos, 
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Text('$memoNum件のメモ');
+        }
+        return SizedBox();
+      }
+    );
+  }
+
+  Widget createNewButton() {
+    return IconButton(
+      onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+        return CreateNewScreen(); 
+      })).then((_) {
+        setState(() {
+          _futureMemos = getMemos();
+        });
+      }),
+      icon: Icon(Icons.edit_square),
+      iconSize: 40,
     );
   }
 
