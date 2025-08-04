@@ -355,7 +355,6 @@ class _HomeScreen extends State<HomeScreen> {
     );
   }
 
-  // インジケーターを非表示
   void hideIndicator(BuildContext context) {
     Navigator.pop(context);
   }

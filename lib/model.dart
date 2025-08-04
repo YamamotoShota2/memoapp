@@ -1,3 +1,5 @@
+// メモのモデルクラス
+
 import 'package:memoapp/enum.dart';
 
 class Memo {
@@ -19,6 +21,7 @@ class Memo {
     required this.pageId
   });
 
+  // 取得したデータからインスタンス化
   factory Memo.fromMap(Map<String, dynamic> map) {
     final properties = map['properties'] as Map<String, dynamic>;
     final createdTimeStr = map['created_time'];

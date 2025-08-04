@@ -1,3 +1,5 @@
+// 新規作成画面
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -20,6 +22,7 @@ class _CreateNewScreen extends State<CreateNewScreen> {
   final TextEditingController _contentController = TextEditingController();
   int? value;
 
+  // メモの新規作成
   Future<void> createNew() async{
     try {
       Map<String, String>? select = value != null ? {"name": "${tags[value!].getString()}"} : null;
@@ -81,6 +84,7 @@ class _CreateNewScreen extends State<CreateNewScreen> {
       backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
       leading: IconButton(
         onPressed: () {
+          // タイトル、内容、タグが入力されている場合、注意のアラートを表示
           if (_titleController.text != "" || _contentController.text != "" || value != null) {
             _showChecking();
           } else {
@@ -171,12 +175,14 @@ class _CreateNewScreen extends State<CreateNewScreen> {
       builder: (BuildContext context) => CustomDialog(title: alertTitle, msg: msg));
   }
 
+  // 入力が保存されないことの注意のアラートを表示
   void _showChecking() {
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomAlertDialog());
   }
 
+  // 通信中のインジケーター表示
   void showIndicator(BuildContext context) {
     showDialog(
       context: context, 
@@ -188,6 +194,7 @@ class _CreateNewScreen extends State<CreateNewScreen> {
     );
   }
 
+  // インジケーターを非表示
   void hideIndicator(BuildContext context) {
     Navigator.pop(context);
   }

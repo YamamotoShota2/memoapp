@@ -1,3 +1,5 @@
+// エラーの表示アラート
+
 import 'package:flutter/material.dart';
 
 class CustomDialog extends StatelessWidget {
