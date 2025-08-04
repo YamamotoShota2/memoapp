@@ -11,13 +11,13 @@ class MemoApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.light,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue),
+          seedColor: Colors.white),
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           brightness: Brightness.dark,
-          seedColor: Colors.blue,
+          seedColor: Colors.grey,
         ),
         useMaterial3: true,
       ),

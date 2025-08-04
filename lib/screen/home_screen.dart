@@ -193,7 +193,7 @@ class _HomeScreen extends State<HomeScreen> {
           Container(
             margin: EdgeInsets.all(3.0),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onPrimary,
+              color: Theme.of(context).colorScheme.onInverseSurface,
               borderRadius: BorderRadius.circular(10.0),
               border: Border.all(
                 width: 2.0,
