@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:memoapp/components/custom_alert_dialog.dart';
 import 'package:memoapp/components/custom_dialog.dart';
 import 'package:memoapp/enum.dart';
 
@@ -79,12 +80,16 @@ class _CreateNewScreen extends State<CreateNewScreen> {
       centerTitle: true,
       backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
       leading: IconButton(
-          onPressed: () {
+        onPressed: () {
+          if (_titleController.text != "" || _contentController.text != "" || value != null) {
+            _showChecking();
+          } else {
             Navigator.pop(context);
-          },
-          icon: Icon(Icons.close),
-          iconSize: 30,
-        ),
+          }
+        },
+        icon: Icon(Icons.close),
+        iconSize: 30,
+      ),
       title: Text(
         '新規作成',
       ),
@@ -164,6 +169,12 @@ class _CreateNewScreen extends State<CreateNewScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(title: alertTitle, msg: msg));
+  }
+
+  void _showChecking() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CustomAlertDialog());
   }
 
   void showIndicator(BuildContext context) {

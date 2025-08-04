@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:memoapp/components/custom_alert_dialog.dart';
 import 'package:memoapp/components/custom_dialog.dart';
 import 'package:memoapp/enum.dart';
 import 'package:memoapp/model.dart';
@@ -19,6 +20,7 @@ class _EditScreen extends State<EditScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   int? value;
+  late final int? checkValue;
   final formKey = GlobalKey<FormState>();
 
   @override
@@ -26,6 +28,7 @@ class _EditScreen extends State<EditScreen> {
     _titleController.text = widget.memo.title;
     _contentController.text = widget.memo.content;
     value = widget.memo.tag != Tags.none ? tags.indexOf(widget.memo.tag) : null ;
+    checkValue = value;
     super.initState();
   }
   
@@ -89,12 +92,16 @@ class _EditScreen extends State<EditScreen> {
       centerTitle: true,
       backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
       leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(Icons.close),
-          iconSize: 30,
-        ),
+        onPressed: () {
+          if (_titleController.text != widget.memo.title || _contentController.text != widget.memo.content || value != checkValue) {
+          _showChecking();
+        } else {
+          Navigator.pop(context);
+        }
+        },
+        icon: Icon(Icons.close),
+        iconSize: 30,
+      ),
       title: Text(
         '編集',
       ),
@@ -185,6 +192,12 @@ class _EditScreen extends State<EditScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) => CustomDialog(title: alertTitle, msg: msg));
+  }
+
+  void _showChecking() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CustomAlertDialog());
   }
 
   void showIndicator(BuildContext context) {
