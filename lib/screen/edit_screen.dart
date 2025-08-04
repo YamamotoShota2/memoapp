@@ -153,7 +153,7 @@ class _EditScreen extends State<EditScreen> {
         hintText: 'Titleを入力'
       ),
       validator: (value) {
-        if (widget.memo.title != '' && (value == null || value.isEmpty)) {
+        if (value == null || value.isEmpty) {
           return '入力してください';
         }
         return null;

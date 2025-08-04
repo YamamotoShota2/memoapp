@@ -21,6 +21,7 @@ class _CreateNewScreen extends State<CreateNewScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   int? value;
+  final formKey = GlobalKey<FormState>();
 
   // メモの新規作成
   Future<void> createNew() async{
@@ -98,13 +99,17 @@ class _CreateNewScreen extends State<CreateNewScreen> {
         '新規作成',
       ),
       actions: [
-        IconButton(
-          onPressed: () {
-            showIndicator(context);
-            createNew();
-          },
-          icon: Icon(Icons.save),
-          iconSize: 30,
+        Form(
+          child: IconButton(
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                showIndicator(context);
+                createNew();
+              }
+            },
+            icon: Icon(Icons.save),
+            iconSize: 30,
+          ),
         )
       ],
     );
@@ -115,6 +120,7 @@ class _CreateNewScreen extends State<CreateNewScreen> {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Form(
+          key: formKey,
           child: Column(
             children: [
               titleField(),
@@ -134,6 +140,12 @@ class _CreateNewScreen extends State<CreateNewScreen> {
       decoration: InputDecoration(
         hintText: 'Titleを入力'
       ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return '入力してください';
+        }
+        return null;
+      },
     );
   }
 
