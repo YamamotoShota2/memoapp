@@ -260,8 +260,8 @@ class _HomeScreen extends State<HomeScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        SizedBox(
-          width: 250,
+        Expanded(
+          flex: 3,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -281,7 +281,16 @@ class _HomeScreen extends State<HomeScreen> {
             ],
           ),
         ),
-        Text(DateFormat('yyyy/M/d').format(memo.lastEditedTime)),
+        Expanded(
+          flex: 1,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              DateFormat('yyyy/M/d').format(memo.lastEditedTime),
+              maxLines: 1,
+            ),
+          ),
+        ),
       ],
     );
   }
