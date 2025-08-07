@@ -11,10 +11,18 @@ class CreateNewScreen extends BaseWriteScreen {
   State<CreateNewScreen> createState() => _CreateNewScreenState();
 }
 
-
 class _CreateNewScreenState extends BaseWriteScreenState<CreateNewScreen> {
+
   @override
   String get pageTitle => "新規作成";
+
+  @override
+  void initState() {
+    super.initState();
+    listener = AppLifecycleListener(
+      onPause: () => apiConnection(),
+    );
+  }
 
   @override
   getResponse(url, headers, body) {

@@ -26,6 +26,14 @@ class _EditScreenState extends BaseWriteScreenState<EditScreen> {
     contentController.text = widget.memo.content;
     value = widget.memo.tag != Tags.none ? tags.indexOf(widget.memo.tag) : null ;
     checkValue = value;
+    listener = AppLifecycleListener(
+      onPause: () { 
+        if (titleController.text == '' || titleController.text.isEmpty) {
+          titleController.text = widget.memo.title;
+        }
+        apiConnection();
+      },
+    );
     super.initState();
   }
 

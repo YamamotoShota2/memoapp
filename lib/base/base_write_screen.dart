@@ -16,6 +16,7 @@ abstract class BaseWriteScreenState<T extends BaseWriteScreen> extends State<T> 
   int? value;
   final formKey = GlobalKey<FormState>();
   abstract final String pageTitle;
+  late final AppLifecycleListener listener;
 
   // API通信
   Future<void> apiConnection() async{
@@ -65,6 +66,9 @@ abstract class BaseWriteScreenState<T extends BaseWriteScreen> extends State<T> 
   }
 
   dynamic getResponse(url, headers, body);
+
+  @override
+  void initState();
 
   @override
   Widget build(BuildContext context) {
