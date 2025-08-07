@@ -31,6 +31,7 @@ class _EditScreenState extends BaseWriteScreenState<EditScreen> {
         if (titleController.text == '' || titleController.text.isEmpty) {
           titleController.text = widget.memo.title;
         }
+        showIndicator(context);
         apiConnection();
       },
     );

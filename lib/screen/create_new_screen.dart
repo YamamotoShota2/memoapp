@@ -20,7 +20,12 @@ class _CreateNewScreenState extends BaseWriteScreenState<CreateNewScreen> {
   void initState() {
     super.initState();
     listener = AppLifecycleListener(
-      onPause: () => apiConnection(),
+      onPause: () {
+        if (titleController.text.isNotEmpty || contentController.text.isNotEmpty || value != null) {
+          showIndicator(context);
+          apiConnection();
+        }
+      }
     );
   }
 
