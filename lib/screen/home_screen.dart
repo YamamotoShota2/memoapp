@@ -214,15 +214,27 @@ class _HomeScreen extends State<HomeScreen> {
         motion: const DrawerMotion(),
         extentRatio: 0.5,
         children: [
-          SlidableAction(
-            onPressed: (_) {
-              showIndicator(context);
-              memo.pin ? pinMemo(memo.pageId, false) : pinMemo(memo.pageId, true); 
-            },
-            backgroundColor: Colors.orangeAccent,
-            foregroundColor: Colors.white,
-            icon: Icons.push_pin,
-          ),
+          ...memo.pin ? [
+            SlidableAction(
+              onPressed: (_) {
+                showIndicator(context);
+                pinMemo(memo.pageId, false); 
+              },
+              backgroundColor: Colors.orangeAccent,
+              foregroundColor: Colors.white,
+              icon: Icons.push_pin_outlined,
+            )
+          ] : [
+            SlidableAction(
+              onPressed: (_) {
+                showIndicator(context);
+                pinMemo(memo.pageId, true); 
+              },
+              backgroundColor: Colors.orangeAccent,
+              foregroundColor: Colors.white,
+              icon: Icons.push_pin,
+            ),
+          ],
           SlidableAction(
             onPressed: (_) {
               showIndicator(context);
