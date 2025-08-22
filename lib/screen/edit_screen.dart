@@ -5,6 +5,7 @@ import 'package:http/http.dart';
 import 'package:memoapp/base/base_write_screen.dart';
 import 'package:memoapp/enum.dart';
 import 'package:memoapp/model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EditScreen extends BaseWriteScreen {
   const EditScreen({required this.memo, super.key});
@@ -28,13 +29,26 @@ class _EditScreenState extends BaseWriteScreenState<EditScreen> {
     checkValue = value;
     listener = AppLifecycleListener(
       onPause: () { 
-        if (titleController.text == '' || titleController.text.isEmpty) {
-          titleController.text = widget.memo.title;
+        if (titleController.text != widget.memo.title || contentController.text != widget.memo.content || value != checkValue) {
+          if (titleController.text == '' || titleController.text.isEmpty) {
+            titleController.text = widget.memo.title;
+          }
+           setValue();
         }
-        ifPaused();
       },
     );
     super.initState();
+  }
+
+  setValue() async{
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('title', titleController.text);
+    prefs.setString('content', contentController.text);
+    if (value != null) {
+      prefs.setInt('tag', value!);
+    }
+    prefs.setString('status', '編集');
+    prefs.setString('pageId',widget.memo.pageId);
   }
 
   @override

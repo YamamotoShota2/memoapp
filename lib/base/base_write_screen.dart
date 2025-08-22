@@ -66,44 +66,6 @@ abstract class BaseWriteScreenState<T extends BaseWriteScreen> extends State<T> 
     }
   }
 
-  Future<void> ifPaused() async{
-    try {
-      Map<String, String>? select = value != null ? {"name": "${tags[value!].getString()}"} : null;
-      final url = 'https://api.notion.com/v1/pages';
-      final Map<String, String> headers = {
-        HttpHeaders.authorizationHeader: 
-          'Bearer ${dotenv.env['NOTION_API_KEY']}',
-        'Notion-Version': '2022-06-28',
-        'Content-Type': 'application/json',
-      };
-      final Object body = jsonEncode({
-        "parent": {"database_id": "${dotenv.env['NOTION_DATABASE_KEY']}"},
-        "properties": {
-          "タイトル": {
-            "title": [
-              {
-                "text": {"content": "${titleController.text}"},
-              },
-            ],
-          },
-          "内容": {
-            "rich_text": [
-              {
-                "text": {"content": "${contentController.text}"}
-              },
-            ],
-          },
-          "タグ": {
-            "select": select
-          },
-        }
-      });
-
-      final response = await getResponse(url, headers, body);
-    } catch (_) {}
-  }
-
-
   dynamic getResponse(url, headers, body);
 
   @override

@@ -11,6 +11,8 @@ import 'package:memoapp/components/custom_dialog.dart';
 import 'package:memoapp/screen/create_new_screen.dart';
 import 'package:memoapp/model.dart';
 import 'package:memoapp/screen/edit_screen.dart';
+import 'package:memoapp/screen/return_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,6 +24,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreen extends State<HomeScreen> {
   late Future<List<Memo>> _futureMemos;
   int memoNum = 0;
+  String loadedTitle = '';
+  String loadedContent = '';
+  int? loadedTag;
+  String? loadedStatus = '';
 
   Map<String, String> headers = {
     HttpHeaders.authorizationHeader: 
@@ -108,6 +114,34 @@ class _HomeScreen extends State<HomeScreen> {
   void initState() {
     super.initState();
     _futureMemos = getMemos();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getValues().then((_) {
+        checkReturn();
+      });
+    });
+  }
+
+  getValues() async {
+    final prefs = await SharedPreferences.getInstance();
+    loadedTitle = prefs.getString('title') ?? '';
+    loadedContent = prefs.getString('content') ?? '';
+    loadedTag = prefs.getInt('tag');
+    loadedStatus = prefs.getString('status');
+  }
+
+  removeValue() async {
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.remove('title');
+    await prefs.remove('content');
+    await prefs.remove('tag');
+    await prefs.remove('status');
+    await prefs.remove('pageId');
+  }
+
+  void checkReturn() {
+    if (loadedTitle != '' || loadedContent != '' || loadedTag != null) {
+      _showReturnDialog();
+    }
   }
 
   @override
@@ -262,6 +296,7 @@ class _HomeScreen extends State<HomeScreen> {
         setState(() {
           _futureMemos = getMemos();
         });
+        removeValue();
       }),
       title: showMemoData(memo)
     );
@@ -351,6 +386,7 @@ class _HomeScreen extends State<HomeScreen> {
         setState(() {
           _futureMemos = getMemos();
         });
+        removeValue();
       }),
       icon: Icon(Icons.edit_square),
       iconSize: 40,
@@ -378,5 +414,41 @@ class _HomeScreen extends State<HomeScreen> {
 
   void hideIndicator(BuildContext context) {
     Navigator.pop(context);
+  }
+
+  Widget returnDialog() {
+    return AlertDialog(
+      title: Text('中断されたメモがあります'),
+      content: Text('再開しますか？'),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context, 'Cancel');
+            removeValue();
+          },
+          child: Text('Cancel')
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context, 'OK');
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+              return ReturnScreen(status: loadedStatus); 
+            })).then((_) {
+              setState(() {
+                _futureMemos = getMemos();
+              });
+              removeValue();
+            });
+          },
+          child: Text('OK')
+        )
+      ]
+    );
+  }
+
+  void _showReturnDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => returnDialog());
   }
 } 
