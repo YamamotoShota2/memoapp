@@ -39,7 +39,7 @@ class _ReturnScreenState extends BaseWriteScreenState<ReturnScreen> {
     value = widget.value;
     pageId = widget.pageId;
     listener = AppLifecycleListener(
-      onPause: () {
+      onInactive: () {
         setValue();
       }
     );
