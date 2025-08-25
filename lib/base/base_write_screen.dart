@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:memoapp/components/custom_alert_dialog.dart';
 import 'package:memoapp/components/custom_dialog.dart';
 import 'package:memoapp/enum.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class BaseWriteScreen extends StatefulWidget {
   const BaseWriteScreen({super.key});
@@ -67,6 +68,16 @@ abstract class BaseWriteScreenState<T extends BaseWriteScreen> extends State<T> 
   }
 
   dynamic getResponse(url, headers, body);
+
+  setValue() async{
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('title', titleController.text);
+    prefs.setString('content', contentController.text);
+    if (value != null) {
+      prefs.setInt('tag', value!);
+    }
+    prefs.setString('status', pageTitle);
+  }
 
   @override
   void initState();

@@ -29,17 +29,6 @@ class _CreateNewScreenState extends BaseWriteScreenState<CreateNewScreen> {
     );
   }
 
-  setValue() async{
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('title', titleController.text);
-    prefs.setString('content', contentController.text);
-    if (value != null) {
-      prefs.setInt('tag', value!);
-    }
-    prefs.setString('status', '新規作成');
-  }
-
-
   @override
   getResponse(url, headers, body) {
     return post(

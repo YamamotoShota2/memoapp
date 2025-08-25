@@ -6,8 +6,20 @@ import 'package:memoapp/base/base_write_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ReturnScreen extends BaseWriteScreen {
-  const ReturnScreen({required this.status, super.key});
+  const ReturnScreen({
+    required this.title, 
+    required this.content, 
+    required this.value,
+    required this.status,
+    required this.pageId,
+    super.key
+  });
+
+  final String? title;
+  final String? content;
+  final int? value;
   final String? status;
+  final String? pageId;
 
   @override
   State<ReturnScreen> createState() => _ReturnScreenState();
@@ -23,32 +35,15 @@ class _ReturnScreenState extends BaseWriteScreenState<ReturnScreen> {
   @override
   void initState() {
     super.initState();
-    getValues();
+    titleController.text = widget.title!;
+    contentController.text = widget.content!;
+    value = widget.value;
+    pageId = widget.pageId;
     listener = AppLifecycleListener(
       onPause: () {
         setValue();
       }
     );
-  }
-
-  setValue() async{
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('title', titleController.text);
-    prefs.setString('content', contentController.text);
-    if (value != null) {
-      prefs.setInt('tag', value!);
-    }
-    prefs.setString('status', pageTitle);
-  }
-
-  getValues() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      titleController.text = prefs.getString('title') ?? '';
-      contentController.text = prefs.getString('content') ?? '';
-      value = prefs.getInt('tag');
-    });
-    pageId = prefs.getString('pageId');
   }
 
   @override

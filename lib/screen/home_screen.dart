@@ -28,6 +28,7 @@ class _HomeScreen extends State<HomeScreen> {
   String loadedContent = '';
   int? loadedTag;
   String? loadedStatus = '';
+  String? loadedPageId = '';
 
   Map<String, String> headers = {
     HttpHeaders.authorizationHeader: 
@@ -127,6 +128,7 @@ class _HomeScreen extends State<HomeScreen> {
     loadedContent = prefs.getString('content') ?? '';
     loadedTag = prefs.getInt('tag');
     loadedStatus = prefs.getString('status');
+    loadedPageId = prefs.getString('pageId');
   }
 
   removeValue() async {
@@ -432,7 +434,7 @@ class _HomeScreen extends State<HomeScreen> {
           onPressed: () {
             Navigator.pop(context, 'OK');
             Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-              return ReturnScreen(status: loadedStatus); 
+              return ReturnScreen(title: loadedTitle, content: loadedContent, value:loadedTag, status: loadedStatus, pageId: loadedPageId); 
             })).then((_) {
               setState(() {
                 _futureMemos = getMemos();
