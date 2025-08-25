@@ -28,7 +28,7 @@ class _EditScreenState extends BaseWriteScreenState<EditScreen> {
     value = widget.memo.tag != Tags.none ? tags.indexOf(widget.memo.tag) : null ;
     checkValue = value;
     listener = AppLifecycleListener(
-      onHide: () { 
+      onInactive: () { 
         if (titleController.text != widget.memo.title || contentController.text != widget.memo.content || value != checkValue) {
           if (titleController.text == '' || titleController.text.isEmpty) {
             titleController.text = widget.memo.title;

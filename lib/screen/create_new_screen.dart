@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:memoapp/base/base_write_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CreateNewScreen extends BaseWriteScreen {
   const CreateNewScreen({super.key});
@@ -21,7 +20,7 @@ class _CreateNewScreenState extends BaseWriteScreenState<CreateNewScreen> {
   void initState() {
     super.initState();
     listener = AppLifecycleListener(
-      onPause: () {
+      onInactive: () {
         if (titleController.text.isNotEmpty || contentController.text.isNotEmpty || value != null) {
           setValue();
         }
